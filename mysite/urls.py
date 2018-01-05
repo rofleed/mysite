@@ -20,6 +20,8 @@ from cmdb import views
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^QA/$', views.index),
-    url(r'^test/$',views.test)
+    url(r'^datacheck/$',views.datacheck),
+    url(r'^channel/$',views.channel)
+
 
 ]

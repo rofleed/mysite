@@ -1,51 +1,6 @@
 (function ($) {
 
 
-    toastr.options.positionClass = 'toast-bottom-center';
-		$(function(){
-			$("#submit").click (function (){
-            //非空判断
-
-
-            var val = $ ("#app_key").val();
-            var val2 = $("#proctime").val();
-            var val3 = $("#datanum").val();
-            var val4 = $("#env").val();
-
-
-
-
-            if (val == ''||$.trim(val) == '') {
-                    //如果val为空或者空格，显示错误信息
-                    toastr.info('app_key不能为空');
-                    ///$("#errorMsg").html('不能为空');
-                    /// $("#errorMsg").show();
-                }else if(val2 ==''||$.trim(val2) == '') {
-                	toastr.info('日期不能为空');
-
-                }
-                else if(val3 ==''||$.trim(val2) == '') {
-                	toastr.info('数量不能为空');
-
-                }
-
-                else
-                {
-                	$("#spinner").show();
-
-                	$.post("/QA/", $("#taskform").serialize())
-                	.success(function()
-                		{ $("#spinner").hide();
-                		toastr.success('脚本执行完成');})
-                	.error(function()
-                		{ $("#spinner").hide();
-                		toastr.error('脚本执行失败'); }
-                		);
-                }
-
-
-            });
-		})
 
 
 	$(window).scroll(function(){

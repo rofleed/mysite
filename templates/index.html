@@ -18,7 +18,72 @@
 	<!-- skin -->
 	<link rel="stylesheet" href="/static/skin/default.css">
 	<link href="/static/css/toastr.min.css" rel="stylesheet" />
+    <style type="text/css">
 
+    .help-tip{
+
+	text-align: center;
+	background-color: #BCDBEA;
+	border-radius: 50%;
+	width: 16px;
+	height: 16px;
+	font-size: 14px;
+	line-height: 16px;
+	cursor: default;
+    padding-bottom:5px;
+    }
+
+    .help-tip:before{
+	content:'?';
+	font-weight: bold;
+	color:#746666;
+    font-size: 12px;
+
+    }
+
+    .help-tip:hover p{
+	display:block;
+	transform-origin: 100% 0%;
+
+	-webkit-animation: fadeIn 0.3s ease-in-out;
+	animation: fadeIn 0.3s ease-in-out;
+
+    }
+
+    .help-tip p{
+	display: none;
+	text-align: left;
+	background-color: #3b7491;
+	padding: 20px;
+	width: 300px;
+	position: absolute;
+	border-radius: 3px;
+	box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+	color: #fff;
+	font-size: 13px;
+	line-height: 1.4;
+    }
+
+    .help-tip p:before{
+	position: absolute;
+	content: '';
+	width:0;
+	height: 0;
+	border:6px solid transparent;
+	border-bottom-color:#1E2021;
+	left:10px;
+	top:-12px;
+    }
+
+    .help-tip p:after{
+	width:100%;
+	height:40px;
+	content:'';
+	position: absolute;
+	top:-40px;
+	left:0;
+    }
+    </style>
 
 
 	<script type = "text/javascript" src = "/static/js/jquery.min.js"></script>
@@ -34,6 +99,8 @@
             var val2 = $("#proctime").val();
             var val3 = $("#datanum").val();
             var val4 = $("#env").val();
+            var val5 = $("#checkbox1") .val()  ;
+
 
 
 
@@ -139,7 +206,7 @@
 									<label for="env">环境</label>
 									<select id ="env" name="env" style="margin-top: 15px!important;margin-bottom: 15px!important; background: rgba(227, 231, 228, 1)" class="form-control">
 										<option value="http://cloud-atlas-collection.pre1.web.nd">集成环境</option>
-										<option value="https://cloud-atlas-collection.beta.101.com">预生产环境</option>
+										<option value="https://cloud-atlas-collection.beta.101.com">预生产环境(暂不支持导入mysql)</option>
 								<!--暂时注释		<option value="https://cloud-atlas-collection.sdp.101.com">生产环境</option>-->
 
 									</select>
@@ -162,6 +229,22 @@
 									<input type="text" class="form-control" name="datanum" id="datanum" placeholder="请输入数量"  />
 									<div class="validation"></div>
 								</div>
+                                <div class="form-group">
+									<label for="checkbox1">强清理模式</label>
+                                    <label class="help-tip">
+		                                <p>该模式下将清理同一时刻内的历史脏数据</p>
+	                                </label>
+									  &nbsp; <input type="checkbox" name="checkbox1" id="checkbox1"   />
+                                    <br/>
+
+                                    <label for="checkbox2">导入mysql</label>
+                                    <label class="help-tip">
+		                                <p>勾选后将本时刻内的数据导入对应mysql日期表</p>
+	                                </label>
+									 &nbsp; <input type="checkbox" name="checkbox2" id="checkbox2"  checked="checked"  />
+
+								</div>
+
 
 
 
@@ -176,9 +259,11 @@
 					<table  style ="margin-top: 100px" class ="table table-bordered"   align ="center"	border="0">
 						<thead>
 							<th>App_key</th>
-							<th>执行日期</th>
+							<th>目标日期</th>
 							<th>数量</th>
 							<th>环境</th>
+							<th>执行时间</th>
+
 						</thead>
 						<tbody>
 							{% for TestList in App_key %}
@@ -187,6 +272,8 @@
 								<td>{{ TestList.proctime }}</td>
 								<td>{{ TestList.datanum }}</td>
 								<td>{{ TestList.env }}</td>
+								<td>{{ TestList.nowtime }}</td>
+
 							</tr>
 							{% endfor %}
 						</tbody>

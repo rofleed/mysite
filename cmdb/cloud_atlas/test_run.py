@@ -7,6 +7,9 @@ import time
 import paramiko
 import pymysql
 
+
+
+
 from cmdb.cloud_atlas_model.event_model import EventModel
 from cmdb.cloud_atlas_model.login_model import LoginModel
 from cmdb.cloud_atlas_model.device_model import DeviceModel
@@ -16,11 +19,12 @@ from cmdb.cloud_atlas_model.analyze_api import Analyze_api
 
 
 
+
 import random
 
 
 
-class SimulateCloudTest(unittest.TestCase):
+class SimulateCloudTest():
 
     # def __init__(self):
     #
@@ -147,65 +151,90 @@ class SimulateCloudTest(unittest.TestCase):
             datademo = self.exception_model.get_data_stat_json()
             r = requests.post(env+"/v0.1/"+app_key+"/action/collect", data=datademo)
 
-    def test_autorun(self,app_key,proctime,datanum,env,):
+    def test_autorun(self,app_key,proctime,datanum,env,mode,sqlorder,):
+        if mode == "on" :
+            self.hostname = '192.168.237.127'
+            self.port = 22
+            self.username = 'root'
+            self.password = 'cx123'
 
-        self.data_day = Data_Day()
-        self.login_model = LoginModel()
-        self.event_model = EventModel()
-        self.device_model = DeviceModel()
-        self.exception_model = ExceptionModel()
-        self.analyze_api = Analyze_api()
-        self.test_device2insight(app_key,proctime,datanum,env)
-        self.test_event2insight(app_key,proctime,datanum,env)
-        self.test_exception2insight(app_key,proctime,datanum,env)
-        self.test_login2insight(app_key,proctime,datanum,env)
-        time.sleep(60)
-        self.hostname = '192.168.237.127'
-        self.port = 22
-        self.username = 'bigdata'
-        self.password = 'bigdata.com'
-        result=Analyze_api().queryforgroup(app_key)
-        a="1"
-        b="0"
-        print (result[0])
-        list1=list(result)
-        if  list1 != None :
-            if a in list1:
+            group = Analyze_api().queryforgroup(app_key)
+            self.execmd = " /home/bigdata/test"+group[0]+"-ex.sh "
+            paramiko.util.log_to_file("paramiko.log")
+            s = paramiko.SSHClient()
+            s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-             self.execmd = " /home/bigdata/test1.sh " + proctime
-             paramiko.util.log_to_file("paramiko.log")
+            s.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
+            stdin, stdout, stderr = s.exec_command(self.execmd)
+            stdin.write("Y")
 
-             s = paramiko.SSHClient()
-             s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            print(stdout.read())
+            s.close()
+            time.sleep(10)
+            self.data_day = Data_Day()
+            self.login_model = LoginModel()
+            self.event_model = EventModel()
+            self.device_model = DeviceModel()
+            self.exception_model = ExceptionModel()
+            self.analyze_api = Analyze_api()
+            self.test_device2insight(app_key, proctime, datanum, env)
+            self.test_event2insight(app_key, proctime, datanum, env)
+            self.test_exception2insight(app_key, proctime, datanum, env)
+            self.test_login2insight(app_key, proctime, datanum, env)
 
-             s.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
-             stdin, stdout, stderr = s.exec_command(self.execmd)
-             stdin.write("Y")
+            if sqlorder =="on":
+                time.sleep(60)
+                self.hostname = '192.168.237.127'
+                self.port = 22
+                self.username = 'bigdata'
+                self.password = 'bigdata.com'
+                result = Analyze_api().queryforgroup(app_key)
+                self.execmd2 = " /home/bigdata/test" + result[0] + ".sh " + proctime
+                print (self.execmd2)
+                paramiko.util.log_to_file("paramiko.log")
+                s = paramiko.SSHClient()
+                s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-             print(stdout.read())
-             print(self.data_day.get_cloud_time_h(deltaday=-1))
+                s.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
+                stdin, stdout, stderr = s.exec_command(self.execmd2)
+                stdin.write("Y")
+                print(stdout.read())
+                s.close()
+            else:
+                pass
 
-             s.close()
-             return ()
-            elif  b in list1 :
+        elif mode == "off":
+            self.data_day = Data_Day()
+            self.login_model = LoginModel()
+            self.event_model = EventModel()
+            self.device_model = DeviceModel()
+            self.exception_model = ExceptionModel()
+            self.analyze_api = Analyze_api()
+            self.test_device2insight(app_key, proctime, datanum, env)
+            self.test_event2insight(app_key, proctime, datanum, env)
+            self.test_exception2insight(app_key, proctime, datanum, env)
+            self.test_login2insight(app_key, proctime, datanum, env)
+            if sqlorder =="on":
+                self.hostname = '192.168.237.127'
+                self.port = 22
+                self.username = 'bigdata'
+                self.password = 'bigdata.com'
+                result = Analyze_api().queryforgroup(app_key)
+                self.execmd2 = " /home/bigdata/test" + result[0] + ".sh" + proctime
+                print (self.execmd2)
+                paramiko.util.log_to_file("paramiko.log")
+                s = paramiko.SSHClient()
+                s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
-             self.execmd = " /home/bigdata/test0.sh " + proctime
-             paramiko.util.log_to_file("paramiko.log")
+                s.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
+                stdin, stdout, stderr = s.exec_command(self.execmd2)
+                stdin.write("Y")
+            else:
+                pass
 
-             s = paramiko.SSHClient()
-             s.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        else:
 
-             s.connect(hostname=self.hostname, port=self.port, username=self.username, password=self.password)
-             stdin, stdout, stderr = s.exec_command(self.execmd)
-             stdin.write("Y")
-
-             print(stdout.read())
-             print(self.data_day.get_cloud_time_h(deltaday=-1))
-
-             s.close()
-             return ()
-            else :
-             return "app_key错误"
+            return "app_key错误"
 
 
 

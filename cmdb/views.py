@@ -1,9 +1,20 @@
+#coding = utf-8
 from django.shortcuts import render
 from django.shortcuts import HttpResponse
-import http.client
-import urllib3
+
 from cmdb.cloud_atlas import test_run
+from cmdb.cloud_atlas import channel_check
+from cmdb.cloud_atlas import datamanager
+from django.core import  serializers
 from cmdb import  models
+import  time
+import  sys
+import json
+reload(sys)
+sys.setdefaultencoding("utf8")
+
+
+
 
 
 # Create your views here.
@@ -12,10 +23,10 @@ from cmdb import  models
 # conn.request("GET","/")
 # r1=conn.getresponse()
 # print(r1.status,r1.reason
+
+
 def index(request):
-    #request.POST
-    #request.GET
-    # return  HttpResponse("hello world")
+
     Testlist=[{},]
     result=[]
     if request.method=="POST":
@@ -23,29 +34,139 @@ def index(request):
         proctime = request.POST.get("proctime",None)
         datanum = request.POST.get("datanum",None)
         env = request.POST.get("env", None)
+        mode = request.POST.get("checkbox1",None)
+        sqlorder = request.POST.get("checkbox2",None)
+        print mode
+        nowtime =time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
 
-        #添加数据到数据库
-        models.HistoryInfo6.objects.create(app_key=app_key,proctime= proctime,datanum = datanum,env =env)
-        #temp = {"app_key":app_key,"proctime":proctime}
 
-        #TestList.append(temp)
-        #TestList = [
-       #     {"app_key": "app_key", "proctime": "proctime"},
 
-       # ]
+        models.HistoryInfo8.objects.create(app_key=app_key,proctime= proctime,datanum = datanum,env =env,nowtime = nowtime)
+
         case = test_run.SimulateCloudTest()
-        result = case.test_autorun(app_key, proctime,datanum,env)
-    TestList = models.HistoryInfo6.objects.all()
+        result = case.test_autorun(app_key, proctime,datanum,env,mode,sqlorder)
+    TestList = models.HistoryInfo8.objects.all()
 
-
+    print TestList
     return  render(request, "index.html", {"App_key":TestList,"result":result})
-    #)
-    # app_key = (request.GET.get("app_key", None))
-    # case = test_run.SimulateCloudTest()
-    # result = case.test_autorun(app_key)
-    # return HttpResponse(result)
-def test(request):
-    app_key = (request.GET.get("app_key", None))
-    case = test_run.SimulateCloudTest()
-    result = case.test_autorun(app_key,)
-    return HttpResponse(result)
+
+def datacheck(request):
+
+    dt =[]
+
+
+    info ="\n"
+    if request.method == "GET":
+        app_info = datamanager.DataManager().test_get_applist()
+        dt=[]
+        # print app_info
+        for (m,n,z) in app_info:
+            temp = {}
+            temp["key"] = m
+            temp["value"] = n
+            # temp[m] = n
+            dt.append(temp)
+            # dt.setdefault(m,[]).append(n.decode("utf-8"))
+    elif request.method == "POST":
+        type = request.POST.get("task_type",None)
+
+        begin_time = request.POST.get("begtime",None)
+        end_time = request.POST.get("endtime",None)
+
+        if type== "2":
+            app_key = request.POST.get("app_key", None)
+            app_list = datamanager.DataManager().test_get_applist()
+
+            result_o = datamanager.DataManager().test_datacheck_process(app_key,begin_time,end_time)
+            result ="\n".join(result_o)
+
+
+            models.HistoryInfo8.objects.create(app_key=app_key,result=result)
+        else:
+            app_list = datamanager.DataManager().test_get_applist()
+            app_key =[]
+            for (m, n, z) in app_list:
+
+                temp = n
+                app_key.append(temp)
+            for app_key in  app_key:
+                result_o = datamanager.DataManager().test_datacheck_process(app_key,begin_time,end_time)
+                result = "\n".join(result_o)
+                print result
+                models.HistoryInfo8.objects.create(app_key=app_key, result=result)
+
+
+    history = models.HistoryInfo8.objects.all()
+
+
+
+    return render(request, "datacheck.html", {"dt": dt,"history":history}, )
+
+def channel(request):
+
+    dt =[]
+
+
+    info ="\n"
+    if request.method == "GET":
+        app_info = channel_check.ChannelCheck().test_get_applist_2()
+        dt=[]
+        # print app_info
+        for (m,n) in app_info:
+            temp = {}
+            temp["key"] = m
+            temp["value"] = n
+            # temp[m] = n
+            dt.append(temp)
+            # dt.setdefault(m,[]).append(n.decode("utf-8"))
+    elif request.method == "POST":
+        type = request.POST.get("task_type",None)
+
+        begin_time = request.POST.get("begtime",None)
+        end_time = request.POST.get("endtime",None)
+
+        if type== "2":
+            app_key = request.POST.get("app_key", None)
+
+            result_o = channel_check.ChannelCheck().test_datacheck_process(app_key,begin_time,end_time)
+            print  result_o
+            if result_o==None:
+                pass
+            else:
+                result = "<br/>".join(result_o[1])
+                app_key_e = (result_o[0])
+                app_list = channel_check.ChannelCheck().test_get_applist_2()
+                for (m, n) in app_list:
+                    if m==app_key_e:
+                        app_name=n
+                        models.HistoryInfo8.objects.create(app_key=app_name,result=result)
+        else:
+
+            app_list = channel_check.ChannelCheck().test_get_applist_2()
+            app_keys =[]
+            for (m, n) in app_list:
+
+                temp = m
+                app_keys.append(temp)
+            for app_key in  app_keys:
+                result_o = channel_check.ChannelCheck().test_datacheck_process(app_key,begin_time,end_time)
+                if result_o == None:
+                    pass
+                else:
+                    result = "<br/>".join(result_o[1])
+                    app_key_e=(result_o[0])
+                    for (m, n) in app_list:
+                        if m == app_key_e:
+                            app_name = n
+                            models.HistoryInfo8.objects.create(app_key=app_name, result=result)
+
+
+
+    history_tmp = models.HistoryInfo8.objects.all()
+    history =  serializers.serialize("json",history_tmp)
+
+
+
+
+    return render(request, "channel.html", {"dt": dt,"history":history}, )
+
