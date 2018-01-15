@@ -75,6 +75,7 @@ def datacheck(request):
 
         if type== "2":
             app_key = request.POST.get("app_key", None)
+            print app_key
             app_list = datamanager.DataManager().test_get_applist()
 
             result_o = datamanager.DataManager().test_datacheck_process(app_key,begin_time,end_time)
@@ -104,52 +105,65 @@ def datacheck(request):
 
 def channel(request):
 
-    dt =[]
-
-
+    dt1 =[]
+    env = request.POST.get("env",None)
+    print env
+    dt2 = []
     info ="\n"
     if request.method == "GET":
-        app_info = channel_check.ChannelCheck().test_get_applist_2()
-        dt=[]
+        app_info_1 = channel_check.ChannelCheck().test_get_applist_2(env='cloud-atlas-server.sdp.101.com')
+        app_info_2 = channel_check.ChannelCheck().test_get_applist_2(env='cloud-atlas-server.pre1.web.nd')
+        dt1=[]
+        dt2=[]
         # print app_info
-        for (m,n) in app_info:
+        for (m,n) in app_info_1:
             temp = {}
             temp["key"] = m
             temp["value"] = n
             # temp[m] = n
-            dt.append(temp)
+            dt1.append(temp)
+            # dt.setdefault(m,[]).append(n.decode("utf-8"))
+        for (m, n) in app_info_2:
+            temp = {}
+            temp["key"] = m
+            temp["value"] = n
+            # temp[m] = n
+            dt2.append(temp)
             # dt.setdefault(m,[]).append(n.decode("utf-8"))
     elif request.method == "POST":
         type = request.POST.get("task_type",None)
+        flag =request.POST.get("hidLI",None)
+        env = request.POST.get("env", None)
 
         begin_time = request.POST.get("begtime",None)
         end_time = request.POST.get("endtime",None)
 
         if type== "2":
-            app_key = request.POST.get("app_key", None)
-
-            result_o = channel_check.ChannelCheck().test_datacheck_process(app_key,begin_time,end_time)
-            print  result_o
+            if env =='cloud-atlas-server.sdp.101.com':
+                app_key = request.POST.get("app_key", None)
+            else:
+                app_key = request.POST.get("app_key_2", None)
+            result_o = channel_check.ChannelCheck().test_datacheck_process(app_key,begin_time,end_time,flag,env)
             if result_o==None:
                 pass
             else:
                 result = "<br/>".join(result_o[1])
                 app_key_e = (result_o[0])
-                app_list = channel_check.ChannelCheck().test_get_applist_2()
+                app_list = channel_check.ChannelCheck().test_get_applist_2(env)
                 for (m, n) in app_list:
                     if m==app_key_e:
                         app_name=n
                         models.HistoryInfo8.objects.create(app_key=app_name,result=result)
         else:
 
-            app_list = channel_check.ChannelCheck().test_get_applist_2()
+            app_list = channel_check.ChannelCheck().test_get_applist_2(env)
             app_keys =[]
             for (m, n) in app_list:
 
                 temp = m
                 app_keys.append(temp)
             for app_key in  app_keys:
-                result_o = channel_check.ChannelCheck().test_datacheck_process(app_key,begin_time,end_time)
+                result_o = channel_check.ChannelCheck().test_datacheck_process(app_key,begin_time,end_time,flag,env)
                 if result_o == None:
                     pass
                 else:
@@ -167,6 +181,5 @@ def channel(request):
 
 
 
-
-    return render(request, "channel.html", {"dt": dt,"history":history}, )
+    return render(request, "channel.html", {"dt1": dt1,"dt2":dt2,"history":history}, )
 

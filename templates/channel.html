@@ -86,10 +86,10 @@
 	left:0;
     }
     .button,.button:visited{
-        background: #79CDC0;
+        background: white;
 	    display: inline-block;
 	    padding: 5px 10px 6px;
-	    color: #fff;
+	    color: black;
 	    text-decoration: none;
 	    -moz-border-radius: 6px;
 	    -webkit-border-radius: 6px;
@@ -103,7 +103,7 @@
 
 
     }
-    .button:hover {
+    .button:active {
 
         background-color: #4CAF50; /* Green */
         color: white;
@@ -114,6 +114,36 @@
     opacity: 0.5;
     cursor: not-allowed;
     }
+    .selected{
+         background: #79CDC0;
+	    display: inline-block;
+	    padding: 5px 10px 6px;
+	    color: #fff;
+	    text-decoration: none;
+	    -moz-border-radius: 6px;
+	    -webkit-border-radius: 6px;
+	    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	    text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	    border-bottom: 1px solid rgba(0,0,0,0.25);
+	    position: relative;
+	    cursor: pointer;
+        transition-duration: 0.4s;}
+        .selected-check{
+         background: #79CDC0;
+	    display: inline-block;
+	    padding: 5px 10px 6px;
+	    color: #fff;
+	    text-decoration: none;
+	    -moz-border-radius: 6px;
+	    -webkit-border-radius: 6px;
+	    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+	    text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	    border-bottom: 1px solid rgba(0,0,0,0.25);
+	    position: relative;
+	    cursor: pointer;
+        transition-duration: 0.4s;}
     </style>
 
 {#    <script src="https://cdn.bootcss.com/moment.js/2.18.1/moment-with-locales.min.js"></script>#}
@@ -172,27 +202,100 @@
                                     }
                             );
 
-                
+
             }
 
             });
 		})
 
+    $(function(){
+
+    $("#indexs li").click(function() {
+
+        $(this).siblings('li').removeClass('selected');
+        $(this).siblings('li').removeClass('selected-check');
+
+        $(this).addClass('selected');
+        $(this).addClass('selected');
+
+    });
+
+
+});
+
+        $(function(){
+
+    $("#index2").click(function() {
+        var ss = document.getElementById('hidLI');
+        ss.value='new'
+
+
+
+
+
+    });
+    $("#index1").click(function() {
+        var ss = document.getElementById('hidLI');
+        var test = document.getElementById('app_key');
+        ss.value='act'
+        console.log(test.value)
+
+
+
+
+    });
+
+
+});
+
+
 
     function showapplist(Names){
+    var env =document.getElementById('env')
+    var task_type =document.getElementById('task_type')
+        console.log(env.value)
+        console.log(task_type.value)
 
 
-
-    if (Names=="2"){
+    if (env.value=="cloud-atlas-server.pre1.web.nd"&&task_type.value=='2'){
 
         NList=document.getElementById("applist")
-        NList.style.display='';
+        NList_2=document.getElementById("applist_2")
+        NList.style.display='NONE';
+        NList_2.style.display='';
 
-        }else{
+        }else if (env.value=="cloud-atlas-server.sdp.101.com"&&task_type.value=='2'){
          Nnews=document.getElementById("applist")
+         Nnews_2=document.getElementById("applist_2")
+        Nnews.style.display='';
+        Nnews_2.style.display='NONE';
+    }
+        else {
+         Nnews=document.getElementById("applist")
+         Nnews_2=document.getElementById("applist_2")
         Nnews.style.display='NONE';
+        Nnews_2.style.display='NONE';
     }
     }
+{#        function showapplist_2(Names){#}
+{##}
+{##}
+{##}
+{#    if (Names=="cloud-atlas-server.pre1.web.nd"){#}
+{##}
+{#        NList=document.getElementById("applist")#}
+{#        NList_2=document.getElementById("applist_2")#}
+{##}
+{#        NList.style.display='NONE';#}
+{#        NList_2.style.display='';#}
+{##}
+{#        }else{#}
+{#         Nnews=document.getElementById("applist")#}
+{#         Nnews_2=document.getElementById("applist_2")#}
+{#        Nnews.style.display='';#}
+{#        Nnews_2.style.display='NONE';#}
+{#    }#}
+{#    }#}
     $(function () {
         var myDate = new Date();
         var preDate = new Date(myDate.getTime() - 30*24*60*60*1000);
@@ -243,7 +346,7 @@
 									<section class="overflow-hidden">
 										<div class="push-100-t push-50 =">
 											<h1 data-toggle="appear" data-class="animated fadeInDown" class="h1 text-white push-10 animated fadeInDown">各页面比对</h1>
-                                            <h2 data-toggle="appear" data-class="animated fadeInDown" class="h1 text-white-10 push-10 animated fadeInDown">（整体趋势、留存、渠道、区域）</h2>
+                                            <h2 data-toggle="appear" style="font-size: 25px!important;" data-class="animated fadeInDown" class="h1 text-white-10 push-10 animated fadeInDown">（整体趋势、留存、渠道、区域、活跃）</h2>
 										</div>
 									</section>
 								</div>
@@ -276,15 +379,26 @@
 				<div class="row">
 					<div class="col-md-8 col-md-offset-2">
 						<div class="cform" id="c-form">
-                            <div class="form-group" >
-                                <label for="button" style="margin-bottom: 20px;">请选择指标</label>
-                                <br/>
-                                <button class="button disabled" style="margin-bottom: 15px; ">活跃指标</button>
-                                <button class="button " style="margin-bottom: 15px; ">新增指标</button>
-                                <button class="button disabled" style="margin-bottom: 15px; ">累计指标</button>
-                            </div>
+
 							<form   id ="taskform" role="form" class="contactForm">
-								<div class="form-group">
+                                <input type="hidden"  value="act" id="hidLI" name="hidLI" />
+                                <label  for="indexs" style="margin-bottom: 20px;">请选择指标</label>
+                                <ul style ="padding-left: 0px" id="indexs">
+                                 <li id = "index1" class="button selected-check " style="margin-bottom: 15px; "onclick="">活跃指标</li>
+                                 <li id ="index2" class="button " style="margin-bottom: 15px; " onclick="">新增指标</li>
+                                </ul>
+{#                                <button class="button disabled" style="margin-bottom: 15px; ">累计指标</button>#}
+                                <div class="form-group">
+									<label for="env">环境</label>
+									<select id ="env" name="env" style="margin-top: 15px!important;margin-bottom: 15px!important; background: rgba(227, 231, 228, 1)" class="form-control" onChange ="showapplist(this.value)" >
+										<option value="cloud-atlas-server.pre1.web.nd">集成环境</option>
+										<option value="cloud-atlas-server.sdp.101.com">生产环境</option>
+
+
+									</select>
+
+								</div>
+                                <div class="form-group">
 									<label for="task_type">请选择类型</label>
 									<select id ="task_type" name="task_type" style="margin-top: 15px!important;margin-bottom: 15px!important; background: rgba(227, 231, 228, 1)" class="form-control" onChange ="showapplist(this.value)">
 										<option value="1">全应用校验</option>
@@ -299,8 +413,16 @@
 								<div id ="applist" style="display: none" class="form-group">
 									<label for="app_key">请选择应用</label>
 									<select id ="app_key" name="app_key" style="margin-top: 15px!important;margin-bottom: 15px!important; background: rgba(227, 231, 228, 1)" class="form-control" >
-                                        {% for list in dt %}
+                                        {% for list in dt1 %}
                                             <option value={{ list.key }}>{{list.value}}</option>
+                                        {% endfor %}
+									</select>
+								</div>
+                                <div id ="applist_2" style="display: none" class="form-group">
+									<label for="app_key_2">请选择应用</label>
+									<select id ="app_key_2" name="app_key_2" style="margin-top: 15px!important;margin-bottom: 15px!important; background: rgba(227, 231, 228, 1)" class="form-control" >
+                                        {% for list2 in dt2 %}
+                                            <option value={{ list2.key }}>{{list2.value}}</option>
                                         {% endfor %}
 									</select>
 								</div>
@@ -308,7 +430,7 @@
 
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="">起始日期：</label>
+                                            <label for="">起始日期</label>
                                                 <div class="input-group date" id='date1'>
                                                     <input type="text" name ="begtime" class="form-control">
                                                     <span class="input-group-addon">
@@ -321,7 +443,7 @@
                                 <div class="row">
                                     <div class="col-sm-6">
                                         <div class="form-group">
-                                            <label for="">结束日期：</label>
+                                            <label for="">结束日期</label>
                                                 <div class="input-group date" id='date2'>
                                                     <input type="text" name="endtime" class="form-control">
                                                     <span class="input-group-addon">
@@ -358,7 +480,7 @@ var head=
 '<td> 应用名 </td>'+
 '<td> 结果 </td>'+
 
-'</tr></thead><tbody>';
+'</tr></thead><tbody >';
 
 var pageData=[];
 var n={{history|safe}};

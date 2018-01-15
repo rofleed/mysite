@@ -152,6 +152,7 @@ class SimulateCloudTest():
             r = requests.post(env+"/v0.1/"+app_key+"/action/collect", data=datademo)
 
     def test_autorun(self,app_key,proctime,datanum,env,mode,sqlorder,):
+        print mode
         if mode == "on" :
             self.hostname = '192.168.237.127'
             self.port = 22
@@ -203,7 +204,7 @@ class SimulateCloudTest():
             else:
                 pass
 
-        elif mode == "off":
+        elif mode == None:
             self.data_day = Data_Day()
             self.login_model = LoginModel()
             self.event_model = EventModel()
