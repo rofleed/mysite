@@ -4,26 +4,21 @@ import pymysql
 import datetime
 import time
 import requests
-import  unittest
 import random
 import base64
 import hashlib
 
 
 from cmdb.cloud_atlas.rand import CoRand
-import math
 
 
 import uuid
 
 
-from datetime import datetime as dt
-from bs4 import  BeautifulSoup
 
 
 import  json
 from hmac import new as hmac
-import  lxml
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")

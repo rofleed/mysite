@@ -21,7 +21,8 @@ urlpatterns = [
     # url(r'^admin/', admin.site.urls),
     url(r'^QA/$', views.index),
     url(r'^datacheck/$',views.datacheck),
-    url(r'^channel/$',views.channel)
+    url(r'^channel/$',views.channel),
+    url(r'^home/$',views.home)
 
 
 ]

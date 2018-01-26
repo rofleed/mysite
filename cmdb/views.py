@@ -183,3 +183,6 @@ def channel(request):
 
     return render(request, "channel.html", {"dt1": dt1,"dt2":dt2,"history":history}, )
 
+def home(request):
+
+    return render(request,"home.html")
