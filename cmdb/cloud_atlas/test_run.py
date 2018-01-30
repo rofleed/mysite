@@ -68,7 +68,7 @@ class SimulateCloudTest():
             self.login_model.set_device_id(user_id)
             self.login_model.set_session_id(user_id)
             self.login_model.set_function_id(21)
-            self.login_model.set_app_ver("1.4")
+            self.login_model.set_app_ver(random.choice(["1.4", "1.5", "V2.1", "V2.6","V2.5.6.7","V3.5.6.7","version_0.1"]))
             self.login_model.set_session_ip(random.choice(["58.30.15.255", "193.54.67.0", "43.238.0.1", "2.6.190.56"]))
             self.login_model.set_create_time(create_time)
 
