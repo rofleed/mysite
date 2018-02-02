@@ -183,30 +183,50 @@
 
 <div>
 	<section id="header" class="appear"></section>
-	<div class="navbar-home navbar-fixed-top" role="navigation" data-0="line-height:100px; height:100px; background-color:rgba(0,0,0,0.3);" data-100="line-height:60px; height:60px; background-color:rgba(0,0,0,1);">
-		<div class="container">
-			<a  class="myicon">
-				<img src="/static/cloud-atlas-v10.png"></a>
+
+    <div class="navbar navbar-fixed-top skrollable skrollable-between" role="navigation" data-0="line-height:100px; height:100px; background-color:rgba(0,0,0,0.3);" data-300="line-height:60px; height:60px; background-color:rgba(0,0,0,1);" style="line-height: 100px; height: 100px; background-color: rgba(0, 0, 0, 0.3);">
+			 <div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="fa fa-bars color-white"></span>
+					</button>
+					<div  class="myicon">
+				<img src="/static/cloud-atlas-v10.png">
+            </div>
+				</div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav skrollable skrollable-between" data-0="margin-top:20px;" data-300="margin-top:5px;" style="margin-top: 20px;">
+
+						<li><a >{{ request.session.username }}</a></li>
+						<li><a href="/logout">登出</a></li>
+
+					</ul>
+				</div><!--/.navbar-collapse -->
 			</div>
 		</div>
+
 
 		<div class="back">
 			<div class='container-2' >
 				<div class="row fadeInDown">
 					<div class="col">
-						<div class="icon"  onclick="window.open('http://192.168.241.18:8095/QA/')">
+						<div class="icon"  >
 							<div style="height: 150px;
 							width: 150px;">
+                                <a href="http://127.0.0.1:8088/QA" target="_parent">
 							<img  style="text-align: center;" src='/static/icon3.png'>
+                                    </a>
 						</div>
 						<p >数据生成工具</p>
 					</div>
 				</div>
 				<div class="col">
-					<div class="icon" onclick="window.open('http://192.168.241.120:8088/channel/')">
+					<div class="icon" >
 						<div style="height: 150px;
 						width: 150px;">
+                            <a href="http://127.0.0.1:8088/channel" target="_parent">
 						<img  style="text-align: center;" src='/static/icon4.png'>
+                                </a>
 					</div>
 					<p >数据校验工具</p>
 				</div>
@@ -215,7 +235,7 @@
 				<div class="icon disabled" >
 					<div style="height: 150px;
 					width: 150px;">
-					<img  style="text-align: center;" src='/static/icon5.png'>
+					<img  style="text-align: center;" src='/static/icon5.png' target="_parent">
 				</div>
 				<p >统计比对工具</p>
 			</div>

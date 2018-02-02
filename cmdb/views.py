@@ -1,12 +1,21 @@
-#coding = utf-8
-from django.shortcuts import render
-from django.shortcuts import HttpResponse
-
+# -*- coding: utf-8 -*-
+from django.shortcuts import render,render_to_response
+from django.shortcuts import HttpResponse,HttpResponseRedirect
+from django.contrib.auth.decorators import login_required
+from django import forms
 from cmdb.cloud_atlas import test_run
 from cmdb.cloud_atlas import channel_check
 from cmdb.cloud_atlas import datamanager
+from django.shortcuts import redirect
 from django.core import  serializers
+from django.contrib import auth
 from cmdb import  models
+
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+from django.contrib.auth.models import User
 import  time
 import  sys
 import json
@@ -24,8 +33,13 @@ sys.setdefaultencoding("utf8")
 # r1=conn.getresponse()
 # print(r1.status,r1.reason
 
+class UserForm(forms.Form):
+    username = forms.CharField(max_length=30)
+    password = forms.CharField(max_length=50)
 
+@login_required
 def index(request):
+
 
     Testlist=[{},]
     result=[]
@@ -49,7 +63,7 @@ def index(request):
 
     print TestList
     return  render(request, "index.html", {"App_key":TestList,"result":result})
-
+@login_required
 def datacheck(request):
 
     dt =[]
@@ -103,11 +117,44 @@ def datacheck(request):
 
     return render(request, "datacheck.html", {"dt": dt,"history":history}, )
 
-def channel(request):
+#注册
 
+def register(request):
+    context = {}
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            #获得表单数据
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+
+            # 判断用户是否存在
+            user = auth.authenticate(username = username,password = password)
+            if user:
+                context['userExit']=True
+                return render(request, 'register.html', context)
+
+
+            #添加到数据库（还可以加一些字段的处理）
+            user = User.objects.create_user(username=username, password=password)
+            user.save()
+
+            #添加到session
+            request.session['username'] = username
+            #调用auth登录
+            auth.login(request, user)
+            #重定向到首页
+            return redirect('/home')
+    else:
+        context = {'isLogin':False}
+    #将req 、页面 、以及context{}（要传入html文件中的内容包含在字典里）返回
+    return  render(request,'register.html',context)
+@login_required
+def channel(request):
+    username = request.session['username']
     dt1 =[]
     env = request.POST.get("env",None)
-    print env
+
     dt2 = []
     info ="\n"
     if request.method == "GET":
@@ -182,7 +229,42 @@ def channel(request):
 
 
     return render(request, "channel.html", {"dt1": dt1,"dt2":dt2,"history":history}, )
-
+@login_required
 def home(request):
+    username= request.session['username']
+    # print username
+    return render(request,"home.html",{"username":username})
 
-    return render(request,"home.html")
+def login(request):
+
+    context = {}
+    if request.method == 'POST':
+        form = UserForm(request.POST)
+        if form.is_valid():
+            # 获取表单用户密码
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            print username,password
+
+            # 获取的表单数据与数据库进行比较
+            user = authenticate(username=username, password=password)
+            if user:
+                # 比较成功，跳转index
+                print ('success')
+                auth.login(request, user)
+                request.session['username'] = username
+                request.session.set_expiry(600)
+                return redirect('/home')
+            else:
+                print('failed')
+                # 比较失败，还在login
+                context = {'isLogin': False, 'pawd': False}
+                return render(request, 'login.html', context)
+    else:
+        context = {'isLogin': False, 'pswd': True}
+    return render(request, 'login.html', context)
+
+def logout(request):
+    #清理cookie里保存username
+    auth.logout(request)
+    return redirect('/')

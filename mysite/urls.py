@@ -15,14 +15,28 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.views.generic import TemplateView
+
 from cmdb import views
 
 urlpatterns = [
     # url(r'^admin/', admin.site.urls),
-    url(r'^QA/$', views.index),
+    url(r'^$', views.login, name='login'),
+    url(r'^login/$', views.login, name='login'),
+    url(r'^QA/$', views.index,name='index'),
     url(r'^datacheck/$',views.datacheck),
     url(r'^channel/$',views.channel),
-    url(r'^home/$',views.home)
+    url(r'^home/$',views.home,name='home'),
+    # url(r'^login/$',views.login,name='login'),
+    # url(r'^index2/$', views.index2),
+    #url(r'^login/QA/$', views.index, name='index'),
+    url(r'^register/$', views.register, name='register'),
+    url(r'^logout', views.logout),
+   # url(r'^QA/', login_required(TemplateView.as_view(template_name="index.html")))
+    # url(r'^login/', include(account_urls)),
+    # url(r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'myapp/login.html'})
+
 
 
 ]
