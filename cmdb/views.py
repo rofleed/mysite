@@ -200,7 +200,7 @@ def channel(request):
                 for (m, n) in app_list:
                     if m==app_key_e:
                         app_name=n
-                        models.HistoryInfo8.objects.create(app_key=app_name,result=result)
+                        models.HistoryInfo10.objects.create(app_key=app_name,result=result)
         else:
 
             app_list = channel_check.ChannelCheck().test_get_applist_2(env)
@@ -219,11 +219,11 @@ def channel(request):
                     for (m, n) in app_list:
                         if m == app_key_e:
                             app_name = n
-                            models.HistoryInfo8.objects.create(app_key=app_name, result=result)
+                            models.HistoryInfo10.objects.create(app_key=app_name, result=result)
 
 
 
-    history_tmp = models.HistoryInfo8.objects.all()
+    history_tmp = models.HistoryInfo10.objects.all()
     history =  serializers.serialize("json",history_tmp)
 
 
